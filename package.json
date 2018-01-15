@@ -1,0 +1,26 @@
+{
+  "name": "nameless.io",
+  "version": "1.0.0",
+  "description": "simple sockets.io/websockets game made as univeristy project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stawrocek/nameless.io.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/stawrocek/nameless.io/issues"
+  },
+  "homepage": "https://github.com/stawrocek/nameless.io#readme",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "cookie-parser": "^1.4.3",
+    "ejs": "^2.5.7",
+    "express": "^4.16.2",
+    "express-session": "^1.15.6"
+  }
+}
