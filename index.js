@@ -1,7 +1,8 @@
-var http = require('http');
-var express = require('express');
-var bodyParser = require('body-parser')
-var ejs = require('ejs');
+const http = require('http');
+const express = require('express');
+const bodyParser = require('body-parser');
+const ejs = require('ejs');
+const io = require('socket.io');
 
 var app = express();
 
@@ -25,5 +26,5 @@ app.use((req,res,next) => {
   res.end(`404: ${req.url} not found\n`);
 });
 
-var server = http.createServer(app).listen(3666);
+var server = http.createServer(app).listen(80);
 console.log(`server created on port ${server.address().port}`);
