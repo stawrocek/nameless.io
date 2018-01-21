@@ -66,5 +66,9 @@ io.on('connection', function(socket) {
     });
     socket.on('movement', function(data) {
         players[socket.id].act(data);
-  });
+    });
 });
+
+setInterval(function() {
+    io.sockets.emit('state', players);
+}, 1000 / 60);
