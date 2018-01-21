@@ -11,8 +11,10 @@ const cMarginX = 200;
 const cMarginY = 150;
 const bSizeX = 1920;
 const bSizeY = 1200;
+const nickOffset = 32;
 let viewPosX = 0;
 let viewPosY = 0;
+
 
 var movement = {
     up: false,
@@ -115,16 +117,15 @@ function onUpdate(state){
         viewPosY = bSizeY - cSizeY;
     
     ctx.drawImage(loadedImages['background.jpg'], -viewPosX, -viewPosY);
-    //ctx.fillStyle = 'green';
     for (let id in state) {
         let player = state[id];
         console.log(`${player.x}, ${player.y}, ${player.name}`);
-        // ctx.beginPath();
-        // ctx.arc(player.x - viewPosX, player.y - viewPosY, 10, 0, 2 * Math.PI);
-        // ctx.fill();
-
-        ctx.drawImage(loadedImages['plane1.png'], player.x - viewPosX - loadedImages['plane1.png'].width / (2*planeScale), player.y - viewPosY - loadedImages['plane1.png'].height / (2*planeScale), loadedImages['plane1.png'].width / planeScale, loadedImages['plane1.png'].height / planeScale);
+        ctx.drawImage(loadedImages['plane1.png'], player.x - viewPosX - loadedImages['plane1.png'].width / planeScale, player.y - viewPosY - loadedImages['plane1.png'].height / planeScale, loadedImages['plane1.png'].width / planeScale, loadedImages['plane1.png'].height / planeScale);
         console.log(loadedImages['plane1.png'].width);
+        ctx.font = "15px Comic Sans MS";
+        ctx.fillStyle = "red";
+        ctx.textAlign = "center";
+        ctx.fillText('['+player.name+']', player.x - viewPosX - loadedImages['plane1.png'].width / (2 * planeScale), player.y - viewPosY - (loadedImages['plane1.png'].height) / (2 * planeScale) + nickOffset); 
     }
 }
 
