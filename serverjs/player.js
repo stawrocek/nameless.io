@@ -18,18 +18,17 @@ function Player(name){
         this.lastTime = Date.now();
         //console.log(dt);
         if(mov.up){
-            this.y += this.speedY*dt;
+            this.y += -this.speedY*dt;
         }
         if(mov.right){
             this.x += this.speedX*dt;
         }
         if(mov.down){
-            this.y += -this.speedY*dt;
+            this.y += +this.speedY*dt;
         }
         if(mov.left){
             this.x -= this.speedX*dt;
         }
-        console.log(`${this.x} ${this.y}`);
     }
 } 
 
