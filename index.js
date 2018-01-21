@@ -11,7 +11,7 @@ const playersModule = require('./serverjs/player');
 let Player = playersModule.Player;
 
 const app = express();
-let userName="guest"+Math.random().toString(36).substr(2, 5);
+let userName="guest_"+Math.random().toString(36).substr(2, 5);
 
 const server = http.Server(app);
 const io = socketIO(server);
@@ -48,14 +48,14 @@ app.get('/register', (req, res) => {
 });
 
 app.post('/register', (req, res) => {
-  let n = req.body.name;
-  let p = req.body.password;
-  if (user.get(n) != null) {
-    res.render('register.html', {nametaken: true});
-    return;
-  }
-  user.create(n, p);
-  res.end(`<h1>Congrats ${n}, you are registered! Your password is ${p}</h1>`);
+    let n = req.body.name;
+    let p = req.body.password;
+    if (user.get(n) != null) {
+        res.render('register.html', {nametaken: true});
+        return;
+    }
+    user.create(n, p);
+    res.end(`<h1>Congrats ${n}, you are registered! Your password is ${p}</h1>`);
 });
 
 app.get('/login', (req, res) => {
@@ -107,6 +107,7 @@ io.on('connection', function(socket) {
         players[socket.id] = new Player(userName);
         players[socket.id].print('New player');
         addNews(socket, `${players[socket.id].name} connected!`);
+        socket.emit('playername', userName);
     });
     socket.on('movement', function(data) {
       players[socket.id].act(data);

@@ -2,6 +2,7 @@ const loadedImages = {};
 let canvas;
 let ctx;
 let socket;
+let username;
 
 const cSizeX = 800;
 const cSizeY = 600;
@@ -82,8 +83,12 @@ function onUpdate(state){
     //console.log(state);
     let myPlane;
     for (let id in state) {
-        if(state[id].name == username)
-            myPlane = state[id];
+        if(username === undefined)
+            myPlane = state[0];
+        else{
+            if(state[id].name == username)
+                myPlane = state[id];
+        }
     }
     // ctx.clearRect(0, 0, cSizeX, cSizeY);
 
@@ -142,5 +147,9 @@ function onResourcesLoaded(){
 
     socket.on('news', function(data) {
         onNews(data);
+    });
+
+    socket.on('playername', function(data) {
+       username = data;
     });
 }
