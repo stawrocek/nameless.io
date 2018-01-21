@@ -88,6 +88,7 @@ function main(){
 }
 
 function onUpdate(state, bullets){
+    console.log(bullets.length);
     if(state === undefined || state === null)
         return;
     let myPlane;
@@ -126,9 +127,7 @@ function onUpdate(state, bullets){
     ctx.drawImage(loadedImages['background.jpg'], -viewPosX, -viewPosY);
     for (let id in state) {
         let player = state[id];
-        console.log(`${player.x}, ${player.y}, ${player.name}`);
         ctx.drawImage(loadedImages['plane1.png'], player.x - viewPosX - loadedImages['plane1.png'].width / planeScale, player.y - viewPosY - loadedImages['plane1.png'].height / planeScale, loadedImages['plane1.png'].width / planeScale, loadedImages['plane1.png'].height / planeScale);
-        console.log(loadedImages['plane1.png'].width);
         ctx.font = "15px Comic Sans MS";
         ctx.fillStyle = "red";
         ctx.textAlign = "center";
