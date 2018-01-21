@@ -12,7 +12,6 @@ const bSizeX = 1920;
 const bSizeY = 1200;
 let viewPosX = 0;
 let viewPosY = 0;
-let firstTime = true;
 
 var movement = {
     up: false,
@@ -79,6 +78,8 @@ function main(){
 }
 
 function onUpdate(state){
+    if(state === undefined || state === null)
+        return;
     //ctx.drawImage(loadedImages['kenobi.png'], 10, 10);
     //console.log(state);
     let myPlane;
@@ -90,6 +91,8 @@ function onUpdate(state){
                 myPlane = state[id];
         }
     }
+    if(myPlane === undefined)
+        return;
     // ctx.clearRect(0, 0, cSizeX, cSizeY);
 
     // change viewPos
@@ -140,9 +143,7 @@ function onResourcesLoaded(){
     });
 
     socket.on('state', function(players) {
-        if(!firstTime)
-            onUpdate(players);
-        firstTime = false;
+        onUpdate(players);
     });
 
     socket.on('news', function(data) {
