@@ -4,6 +4,7 @@ let ctx;
 let socket;
 let username;
 
+const planeScale = 10;
 const cSizeX = 800;
 const cSizeY = 600;
 const cMarginX = 200;
@@ -56,7 +57,7 @@ document.addEventListener('keyup', function(event) {
 });
 
 function prepareImages(imagesLoadedCB){
-    let images = ['kenobi.png', 'background.jpg'];
+    let images = ['kenobi.png', 'background.jpg', 'plane1.png'];
     let promiseArray = images.map(function(imgurl){
     let prom = new Promise(function(resolve,reject){
         let img = new Image();
@@ -79,8 +80,6 @@ function main(){
 }
 
 function onUpdate(state){
-    //ctx.drawImage(loadedImages['kenobi.png'], 10, 10);
-    //console.log(state);
     let myPlane;
     for (let id in state) {
         if(username === undefined)
@@ -90,7 +89,6 @@ function onUpdate(state){
                 myPlane = state[id];
         }
     }
-    // ctx.clearRect(0, 0, cSizeX, cSizeY);
 
     // change viewPos
     viewPosX, cSizeX, cMarginX, myPlane.x;
@@ -114,13 +112,16 @@ function onUpdate(state){
         viewPosY = bSizeY - cSizeY;
     
     ctx.drawImage(loadedImages['background.jpg'], -viewPosX, -viewPosY);
-    ctx.fillStyle = 'green';
+    //ctx.fillStyle = 'green';
     for (let id in state) {
         let player = state[id];
         console.log(`${player.x}, ${player.y}, ${player.name}`);
-        ctx.beginPath();
-        ctx.arc(player.x - viewPosX, player.y - viewPosY, 10, 0, 2 * Math.PI);
-        ctx.fill();
+        // ctx.beginPath();
+        // ctx.arc(player.x - viewPosX, player.y - viewPosY, 10, 0, 2 * Math.PI);
+        // ctx.fill();
+
+        ctx.drawImage(loadedImages['plane1.png'], player.x - viewPosX - loadedImages['plane1.png'].width / (2*planeScale), player.y - viewPosY - loadedImages['plane1.png'].height / (2*planeScale), loadedImages['plane1.png'].width / planeScale, loadedImages['plane1.png'].height / planeScale);
+        console.log(loadedImages['plane1.png'].width);
     }
 }
 
