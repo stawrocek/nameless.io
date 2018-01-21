@@ -11,7 +11,7 @@ const playersModule = require('./serverjs/player');
 let Player = playersModule.Player;
 
 const app = express();
-let userName="guest_"+Math.random().toString(36).substr(2, 5);
+let userName;
 
 const server = http.Server(app);
 const io = socketIO(server);
@@ -82,6 +82,7 @@ app.post('/login', (req, res) => {
 
 app.get('/guest', (req, res) => {
   req.session.user = user.anon();
+  userName=req.session.user.name;
   res.redirect(302, '/');
 });
 
