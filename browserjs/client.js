@@ -19,7 +19,7 @@ var movement = {
     down: false,
     left: false,
     right: false
-}
+};
 
 document.addEventListener('keydown', function(event) {
     switch (event.keyCode) {
@@ -129,7 +129,7 @@ function onUpdate(state){
 }
 
 function onNews(data){
-    document.getElementById("news").innerHTML = data;
+    document.getElementById("news").innerHTML += "\n" + data;
 }
 
 function onResourcesLoaded(){
