@@ -3,6 +3,7 @@ let canvas;
 let ctx;
 let socket;
 let username;
+let bullets = [];
 
 const planeScale = 10;
 const cSizeX = 800;
@@ -35,6 +36,9 @@ document.addEventListener('keydown', function(event) {
         case 83: // S
             movement.down = true;
             break;
+        case 32: // S
+            movement.space = true;
+            break;
     }
 });
 
@@ -52,11 +56,14 @@ document.addEventListener('keyup', function(event) {
         case 83: // S
             movement.down = false;
             break;
+        case 32: // S
+            movement.space = false;
+            break;
     }
 });
 
 function prepareImages(imagesLoadedCB){
-    let images = ['kenobi.png', 'background.jpg', 'plane1.png'];
+    let images = ['kenobi.png', 'background.jpg', 'plane1.png', 'bullet.png'];
     let promiseArray = images.map(function(imgurl){
     let prom = new Promise(function(resolve,reject){
         let img = new Image();
@@ -78,7 +85,7 @@ function main(){
     prepareImages(onResourcesLoaded);
 }
 
-function onUpdate(state){
+function onUpdate(state, bullets){
     if(state === undefined || state === null)
         return;
     let myPlane;
@@ -118,13 +125,13 @@ function onUpdate(state){
     //ctx.fillStyle = 'green';
     for (let id in state) {
         let player = state[id];
-        console.log(`${player.x}, ${player.y}, ${player.name}`);
+        //console.log(`${player.x}, ${player.y}, ${player.name}`);
         // ctx.beginPath();
         // ctx.arc(player.x - viewPosX, player.y - viewPosY, 10, 0, 2 * Math.PI);
         // ctx.fill();
 
         ctx.drawImage(loadedImages['plane1.png'], player.x - viewPosX - loadedImages['plane1.png'].width / (2*planeScale), player.y - viewPosY - loadedImages['plane1.png'].height / (2*planeScale), loadedImages['plane1.png'].width / planeScale, loadedImages['plane1.png'].height / planeScale);
-        console.log(loadedImages['plane1.png'].width);
+        //console.log(loadedImages['plane1.png'].width);
     }
 }
 
@@ -143,8 +150,8 @@ function onResourcesLoaded(){
         }, 1000 / 60);
     });
 
-    socket.on('state', function(players) {
-        onUpdate(players);
+    socket.on('state', function(data) {
+        onUpdate(data.players, data.bullets);
     });
 
     socket.on('news', function(data) {
