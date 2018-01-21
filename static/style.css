@@ -1,0 +1,11 @@
+.news {
+    width: 400px;
+    float: left;
+    border: 1px solid black;
+}
+
+.control {
+    width: 400px;
+    border: 1px solid black;
+    overflow: hidden;
+}

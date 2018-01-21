@@ -35,8 +35,12 @@ app.use(express.static(__dirname + '/static/'));
 app.use(express.static(__dirname + '/browserjs/'));
 
 app.get('/', (req, res) => {
-    var model = {};
-    res.render('index.html', model);
+  if (req.session.user == undefined) {
+    res.redirect(302, "/login");
+    return;
+  }
+  var model = {name: req.session.user.name};
+  res.render('index.html', model);
 });
 
 app.get('/register', (req, res) => {
@@ -59,6 +63,10 @@ app.get('/login', (req, res) => {
 });
 
 app.post('/login', (req, res) => {
+  if (req.body.guest) {
+    res.redirect(302, '/guest');
+    return;
+  }
   let n = req.body.name;
   let p = req.body.password;
   u = user.get(n);
@@ -68,6 +76,11 @@ app.post('/login', (req, res) => {
   }
   req.session.user = u;
   res.end("<h1>You have successfully logged in!</h1>");
+});
+
+app.get('/guest', (req, res) => {
+  req.session.user = user.anon();
+  res.redirect(302, '/');
 });
 
 app.use((req,res,next) => {

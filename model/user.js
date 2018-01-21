@@ -3,10 +3,11 @@ var sha256 = require('js-sha256').sha256;
 
 class User {
     anon() {
-        ide = Math.floor(Math.random()*1000000);
+        let ide = -Math.floor(Math.random()*1000000);
         return {
             id: ide,
-            name: "guest" + ide
+            name: "guest" + ide,
+            hash: null,
         };
     }
     get(name) {

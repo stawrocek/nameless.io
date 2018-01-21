@@ -7,9 +7,15 @@
     <title>nameless.io</title>
     <script src="/socket.io/socket.io.js"></script>
     <script type="text/javascript" src="client.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body onload="main()">
-    <div id="news">;</div><br>
+    <div>
+        <div class="news" id="news">;</div>
+        <div class="control">
+            <span style="text-align: center">You are logged in as <%= name %></span>
+        </div>
+    </div>
     <canvas id="myCanvas" width="800" height="600" style="border:1px solid #000000;">
     </canvas>
 </body>
