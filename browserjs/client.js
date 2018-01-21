@@ -2,7 +2,6 @@ const loadedImages = {};
 let canvas;
 let ctx;
 let socket;
-let username;
 
 const cSizeX = 800;
 const cSizeY = 600;
@@ -125,14 +124,11 @@ function onNews(data){
 }
 
 function onResourcesLoaded(){
-    username = prompt("Please enter your name", "Ben Kebobi");
     socket = io();
     socket.on('connect_error', function (m) { log("connect_error "); });
     socket.on('connect', function (m) { 
         console.log("socket.io connection open"); 
-        socket.emit('new_player', { 
-                                    "user": username
-                                    });
+        socket.emit('new_player', {});
         setInterval(function() {
             socket.emit('movement', movement);
         }, 1000 / 60);

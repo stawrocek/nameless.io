@@ -11,7 +11,7 @@ const playersModule = require('./serverjs/player');
 let Player = playersModule.Player;
 
 const app = express();
-
+let userName="guest"+Math.random().toString(36).substr(2, 5);
 
 const server = http.Server(app);
 const io = socketIO(server);
@@ -70,12 +70,14 @@ app.post('/login', (req, res) => {
   let n = req.body.name;
   let p = req.body.password;
   u = user.get(n);
-  if (u == null || sha256(p) != u.hash) {
+  if (u == null || sha256(p) !== u.hash) {
     res.render('login.html', {wrong:true});
     return;
   }
   req.session.user = u;
   res.end("<h1>You have successfully logged in!</h1>");
+  userName=u.name;
+  console.log(`${req.session.user};${userName}`);
 });
 
 app.get('/guest', (req, res) => {
@@ -102,7 +104,7 @@ io.on('connection', function(socket) {
     console.log('someone connected, show him da wey brotherz');
     socket.on('new_player', function(data) {
         //console.log(`new_player ${socket.id}`);
-        players[socket.id] = new Player(data.user);
+        players[socket.id] = new Player(userName);
         players[socket.id].print('New player');
         addNews(socket, `${players[socket.id].name} connected!`);
     });
