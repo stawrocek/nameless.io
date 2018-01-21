@@ -2,6 +2,17 @@ const loadedImages = {};
 let canvas;
 let ctx;
 let socket;
+let username;
+
+const cSizeX = 800;
+const cSizeY = 600;
+const cMarginX = 200;
+const cMarginY = 150;
+const bSizeX = 1920;
+const bSizeY = 1200;
+let viewPosX = 0;
+let viewPosY = 0;
+let firstTime = true;
 
 var movement = {
     up: false,
@@ -45,7 +56,7 @@ document.addEventListener('keyup', function(event) {
 });
 
 function prepareImages(imagesLoadedCB){
-    let images = ['kenobi.png'];
+    let images = ['kenobi.png', 'background.jpg'];
     let promiseArray = images.map(function(imgurl){
     let prom = new Promise(function(resolve,reject){
         let img = new Image();
@@ -70,13 +81,41 @@ function main(){
 function onUpdate(state){
     //ctx.drawImage(loadedImages['kenobi.png'], 10, 10);
     //console.log(state);
-    ctx.clearRect(0, 0, 800, 600);
+    let myPlane;
+    for (let id in state) {
+        if(state[id].name == username)
+            myPlane = state[id];
+    }
+    // ctx.clearRect(0, 0, cSizeX, cSizeY);
+
+    // change viewPos
+    viewPosX, cSizeX, cMarginX, myPlane.x;
+    if(myPlane.x - viewPosX > cSizeX - cMarginX)
+        viewPosX = myPlane.x + cMarginX - cSizeX;
+    if (myPlane.x - viewPosX < cMarginX)
+        viewPosX = myPlane.x - cMarginX;
+    if (myPlane.y - viewPosY > cSizeY - cMarginY)
+        viewPosY = myPlane.y + cMarginY - cSizeY;
+    if (myPlane.y - viewPosY < cMarginY)
+        viewPosY = myPlane.y - cMarginY;
+
+    // check borders
+    if (viewPosX < 0)
+        viewPosX = 0;
+    if (viewPosX > bSizeX - cSizeX)
+        viewPosX = bSizeX - cSizeX;
+    if (viewPosY < 0)
+        viewPosY = 0;
+    if (viewPosY > bSizeY - cSizeY)
+        viewPosY = bSizeY - cSizeY;
+    
+    ctx.drawImage(loadedImages['background.jpg'], -viewPosX, -viewPosY);
     ctx.fillStyle = 'green';
     for (let id in state) {
         let player = state[id];
         console.log(`${player.x}, ${player.y}, ${player.name}`);
         ctx.beginPath();
-        ctx.arc(player.x, player.y, 10, 0, 2 * Math.PI);
+        ctx.arc(player.x - viewPosX, player.y - viewPosY, 10, 0, 2 * Math.PI);
         ctx.fill();
     }
 }
@@ -86,7 +125,7 @@ function onNews(data){
 }
 
 function onResourcesLoaded(){
-    let username = prompt("Please enter your name", "Ben Kebobi");
+    username = prompt("Please enter your name", "Ben Kebobi");
     socket = io();
     socket.on('connect_error', function (m) { log("connect_error "); });
     socket.on('connect', function (m) { 
@@ -100,7 +139,9 @@ function onResourcesLoaded(){
     });
 
     socket.on('state', function(players) {
-        onUpdate(players);
+        if(!firstTime)
+            onUpdate(players);
+        firstTime = false;
     });
 
     socket.on('news', function(data) {
