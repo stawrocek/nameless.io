@@ -75,7 +75,7 @@ app.post('/login', (req, res) => {
     return;
   }
   req.session.user = u;
-  res.end("<h1>You have successfully logged in!</h1>");
+  res.redirect(302, '/');
 });
 
 app.get('/guest', (req, res) => {
