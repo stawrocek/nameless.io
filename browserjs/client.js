@@ -67,6 +67,20 @@ function main(){
     prepareImages(onResourcesLoaded);
 }
 
+function onUpdate(state){
+    //ctx.drawImage(loadedImages['kenobi.png'], 10, 10);
+    //console.log(state);
+    ctx.clearRect(0, 0, 800, 600);
+    ctx.fillStyle = 'green';
+    for (let id in state) {
+        let player = state[id];
+        console.log(`${player.x}, ${player.y}, ${player.name}`);
+        ctx.beginPath();
+        ctx.arc(player.x, player.y, 10, 0, 2 * Math.PI);
+        ctx.fill();
+    }
+}
+
 function onResourcesLoaded(){
     let username = prompt("Please enter your name", "Ben Kebobi");
     socket = io();
@@ -76,9 +90,10 @@ function onResourcesLoaded(){
         socket.emit('new_player', { "user": username });
         setInterval(function() {
             socket.emit('movement', movement);
-            console.log(movement);
         }, 1000 / 60);
     });
 
-    ctx.drawImage(loadedImages['kenobi.png'], 10, 10);
+    socket.on('state', function(players) {
+        onUpdate(players);
+    });
 }
