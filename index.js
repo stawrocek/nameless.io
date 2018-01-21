@@ -4,6 +4,8 @@ const bodyParser = require('body-parser');
 const ejs = require('ejs');
 const socketIO = require('socket.io');
 const user = require('./model/user');
+const playersModule = require('./serverjs/player');
+let Player = playersModule.Player;
 
 const app = express();
 
@@ -56,19 +58,13 @@ server.listen(app.get('port'), function(){
 let players = {};
 
 io.on('connection', function(socket) {
-  console.log('someone connected, show him da wey brotherz');
-  socket.on('new_player', function(data) {
-    console.log(`wtf ${data.user}`);
-    //players[socket.id] = {
-    players[data.user] = {
-      x: 300,
-      y: 300,
-      user: data.user
-    };
-    console.log(`New player:  + ${players[data.user].x}, ${players[data.user].y}, ${players[data.user].user}`);
+    console.log('someone connected, show him da wey brotherz');
+    socket.on('new_player', function(data) {
+        console.log(`new_player ${socket.id}`);
+        players[socket.id] = new Player(data.user);
+        players[socket.id].print('New player');
+    });
+    socket.on('movement', function(data) {
+        players[socket.id].act(data);
   });
 });
-
-setInterval(function() {
-  io.sockets.emit('message', 'hi!');
-}, 1000);

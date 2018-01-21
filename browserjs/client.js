@@ -3,6 +3,47 @@ let canvas;
 let ctx;
 let socket;
 
+var movement = {
+    up: false,
+    down: false,
+    left: false,
+    right: false
+}
+
+document.addEventListener('keydown', function(event) {
+    switch (event.keyCode) {
+        case 65: // A
+            movement.left = true;
+            break;
+        case 87: // W
+            movement.up = true;
+            break;
+        case 68: // D
+            movement.right = true;
+            break;
+        case 83: // S
+            movement.down = true;
+            break;
+    }
+});
+
+document.addEventListener('keyup', function(event) {
+    switch (event.keyCode) {
+        case 65: // A
+            movement.left = false;
+            break;
+        case 87: // W
+            movement.up = false;
+            break;
+        case 68: // D
+            movement.right = false;
+            break;
+        case 83: // S
+            movement.down = false;
+            break;
+    }
+});
+
 function prepareImages(imagesLoadedCB){
     let images = ['kenobi.png'];
     let promiseArray = images.map(function(imgurl){
@@ -27,16 +68,17 @@ function main(){
 }
 
 function onResourcesLoaded(){
+    let username = prompt("Please enter your name", "Ben Kebobi");
     socket = io();
     socket.on('connect_error', function (m) { log("connect_error "); });
     socket.on('connect', function (m) { 
         console.log("socket.io connection open"); 
-        socket.emit('new_player', { "user": "ben_kebobi" });
+        socket.emit('new_player', { "user": username });
+        setInterval(function() {
+            socket.emit('movement', movement);
+            console.log(movement);
+        }, 1000 / 60);
     });
-    socket.on('message', function(data) {
-        console.log(data);
-    });
-
 
     ctx.drawImage(loadedImages['kenobi.png'], 10, 10);
 }
