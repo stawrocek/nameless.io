@@ -36,8 +36,20 @@ server.listen(app.get('port'), function(){
   console.log(`server created on port ${app.get('port')}`);
 });
 
+let players = {};
+
 io.on('connection', function(socket) {
   console.log('someone connected, show him da wey brotherz');
+  socket.on('new_player', function(data) {
+    console.log(`wtf ${data.user}`);
+    //players[socket.id] = {
+    players[data.user] = {
+      x: 300,
+      y: 300,
+      user: data.user
+    };
+    console.log(`New player:  + ${players[data.user].x}, ${players[data.user].y}, ${players[data.user].user}`);
+  });
 });
 
 setInterval(function() {
