@@ -37,7 +37,7 @@ server.listen(app.get('port'), function(){
 });
 
 io.on('connection', function(socket) {
-  console.log('someone connected, show him the way brotherz');
+  console.log('someone connected, show him da wey brotherz');
 });
 
 setInterval(function() {
