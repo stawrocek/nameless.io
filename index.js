@@ -82,30 +82,32 @@ function addNews(socket, msg){
     socket.emit('news', msg);
 }
 
-//let players = {};
-
-let room=0;
-let rooms = [];
-rooms[0]={};
+let players = {};
+let disconnectedTmp=[];
 
 io.on('connection', function(socket) {
     console.log('someone connected, show him da wey brotherz');
     socket.on('new_player', function(data) {
-        console.log(`new_player ${socket.id}`);
-        rooms[room][socket.id] = new Player(data.user);
-        rooms[room][socket.id].print('New player');
-        addNews(socket, `${rooms[room][socket.id].name} connected!`);
+        //console.log(`new_player ${socket.id}`);
+        players[socket.id] = new Player(data.user);
+        players[socket.id].print('New player');
+        addNews(socket, `${players[socket.id].name} connected!`);
     });
     socket.on('movement', function(data) {
-      rooms[room][socket.id].act(data);
+      players[socket.id].act(data);
     });
     socket.on('disconnect', function() {
-        console.log(`${rooms[room][socket.id].name} disconnected!`);
-        addNews(socket, `${rooms[room][socket.id].name} disconnected!`);
-        delete rooms[room][socket.id];
+        //console.log(`${players[socket.id].name} disconnected!`);
+        //addNews(socket, `${players[socket.id].name} disconnected!`);
+        disconnectedTmp.push(`${players[socket.id].name} disconnected!`);
+        delete players[socket.id];
     });
 });
 
 setInterval(function() {
-    io.sockets.emit('state', rooms[room]);
+    io.sockets.emit('state', players);
+    for(id in disconnectedTmp)
+        io.sockets.emit('news', disconnectedTmp[id]);
+    disconnectedTmp = [];
+
 }, 1000 / 60);

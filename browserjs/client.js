@@ -91,7 +91,9 @@ function onResourcesLoaded(){
     socket.on('connect_error', function (m) { log("connect_error "); });
     socket.on('connect', function (m) { 
         console.log("socket.io connection open"); 
-        socket.emit('new_player', { "user": username });
+        socket.emit('new_player', { 
+                                    "user": username
+                                    });
         setInterval(function() {
             socket.emit('movement', movement);
         }, 1000 / 60);
