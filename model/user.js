@@ -10,10 +10,10 @@ class User {
         };
     }
     get(name) {
+        if (!fs.existsSync('data/user/'+name+'.json')) return null;
         var file = fs.readFileSync('data/user/'+name+'.json');
-        if (file == null) return null;
         var obj = JSON.parse(file);
-        return obj || null;
+        return obj;
     }
     create(name, password) {
         let user = {

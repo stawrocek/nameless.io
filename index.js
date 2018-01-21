@@ -3,7 +3,10 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const ejs = require('ejs');
 const socketIO = require('socket.io');
+const session = require('express-session');
+const cookieParser = require('cookie-parser');
 const user = require('./model/user');
+const sha256 = require('js-sha256').sha256;
 
 const app = express();
 
@@ -19,6 +22,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true
 }));
+app.use(session({
+    //store: new FileStore({path: "./sessions", logFn: function(){}}),
+    secret: "pls send help", resave: true, saveUninitialized: true}));
+app.use(cookieParser());
 
 app.set('port', 5000);
 
@@ -31,7 +38,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/register', (req, res) => {
-  res.render('register.html', {});
+  res.render('register.html', {nametaken:false});
 });
 
 app.post('/register', (req, res) => {
@@ -41,8 +48,24 @@ app.post('/register', (req, res) => {
     res.render('register.html', {nametaken: true});
     return;
   }
-  user.create(n, p)
+  user.create(n, p);
   res.end(`<h1>Congrats ${n}, you are registered! Your password is ${p}</h1>`);
+});
+
+app.get('/login', (req, res) => {
+  res.render('login.html', {wrong:false});
+});
+
+app.post('/login', (req, res) => {
+  let n = req.body.name;
+  let p = req.body.password;
+  u = user.get(n);
+  if (u == null || sha256(p) != u.hash) {
+    res.render('login.html', {wrong:true});
+    return;
+  }
+  req.session.user = u;
+  res.end("<h1>You have successfully logged in!</h1>");
 });
 
 app.use((req,res,next) => {
