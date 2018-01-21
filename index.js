@@ -100,6 +100,18 @@ function addNews(socket, msg){
 
 let players = {};
 let disconnectedTmp=[];
+let bullets = [];
+
+function spawnBullet(socket, plane){
+    newBullet = {
+      "x": plane.x,
+      "y": plane.y,
+      "angle": plane.angle,
+      "speed": plane.speed
+    };
+    //socket.emit('new_bullet', newBullet);
+    bullets.push(newBullet);
+}
 
 io.on('connection', function(socket) {
     console.log('someone connected, show him da wey brotherz');
@@ -111,7 +123,10 @@ io.on('connection', function(socket) {
         socket.emit('playername', userName);
     });
     socket.on('movement', function(data) {
-      players[socket.id].act(data);
+        players[socket.id].act(data);
+        if(data.space && players[socket.id].tryToShoot()){
+            spawnBullet(socket, players[socket.id]);
+        }
     });
     socket.on('disconnect', function() {
         //console.log(`${players[socket.id].name} disconnected!`);
@@ -122,9 +137,8 @@ io.on('connection', function(socket) {
 });
 
 setInterval(function() {
-    io.sockets.emit('state', players);
+    io.sockets.emit('state', {"players": players, "bullets": bullets});
     for(id in disconnectedTmp)
         io.sockets.emit('news', disconnectedTmp[id]);
     disconnectedTmp = [];
-
 }, 1000 / 60);

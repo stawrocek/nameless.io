@@ -3,6 +3,7 @@ let canvas;
 let ctx;
 let socket;
 let username;
+let bullets = [];
 
 const planeScale = 10;
 const cSizeX = 800;
@@ -11,8 +12,10 @@ const cMarginX = 200;
 const cMarginY = 150;
 const bSizeX = 1920;
 const bSizeY = 1200;
+const nickOffset = 32;
 let viewPosX = 0;
 let viewPosY = 0;
+
 
 var movement = {
     up: false,
@@ -35,6 +38,9 @@ document.addEventListener('keydown', function(event) {
         case 83: // S
             movement.down = true;
             break;
+        case 32: // S
+            movement.space = true;
+            break;
     }
 });
 
@@ -52,11 +58,14 @@ document.addEventListener('keyup', function(event) {
         case 83: // S
             movement.down = false;
             break;
+        case 32: // S
+            movement.space = false;
+            break;
     }
 });
 
 function prepareImages(imagesLoadedCB){
-    let images = ['kenobi.png', 'background.jpg', 'plane1.png'];
+    let images = ['kenobi.png', 'background.jpg', 'plane1.png', 'bullet.png'];
     let promiseArray = images.map(function(imgurl){
     let prom = new Promise(function(resolve,reject){
         let img = new Image();
@@ -78,7 +87,7 @@ function main(){
     prepareImages(onResourcesLoaded);
 }
 
-function onUpdate(state){
+function onUpdate(state, bullets){
     if(state === undefined || state === null)
         return;
     let myPlane;
@@ -115,16 +124,15 @@ function onUpdate(state){
         viewPosY = bSizeY - cSizeY;
     
     ctx.drawImage(loadedImages['background.jpg'], -viewPosX, -viewPosY);
-    //ctx.fillStyle = 'green';
     for (let id in state) {
         let player = state[id];
         console.log(`${player.x}, ${player.y}, ${player.name}`);
-        // ctx.beginPath();
-        // ctx.arc(player.x - viewPosX, player.y - viewPosY, 10, 0, 2 * Math.PI);
-        // ctx.fill();
-
-        ctx.drawImage(loadedImages['plane1.png'], player.x - viewPosX - loadedImages['plane1.png'].width / (2*planeScale), player.y - viewPosY - loadedImages['plane1.png'].height / (2*planeScale), loadedImages['plane1.png'].width / planeScale, loadedImages['plane1.png'].height / planeScale);
+        ctx.drawImage(loadedImages['plane1.png'], player.x - viewPosX - loadedImages['plane1.png'].width / planeScale, player.y - viewPosY - loadedImages['plane1.png'].height / planeScale, loadedImages['plane1.png'].width / planeScale, loadedImages['plane1.png'].height / planeScale);
         console.log(loadedImages['plane1.png'].width);
+        ctx.font = "15px Comic Sans MS";
+        ctx.fillStyle = "red";
+        ctx.textAlign = "center";
+        ctx.fillText('['+player.name+']', player.x - viewPosX - loadedImages['plane1.png'].width / (2 * planeScale), player.y - viewPosY - (loadedImages['plane1.png'].height) / (2 * planeScale) + nickOffset); 
     }
 }
 
@@ -143,8 +151,8 @@ function onResourcesLoaded(){
         }, 1000 / 60);
     });
 
-    socket.on('state', function(players) {
-        onUpdate(players);
+    socket.on('state', function(data) {
+        onUpdate(data.players, data.bullets);
     });
 
     socket.on('news', function(data) {
