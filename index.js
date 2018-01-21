@@ -130,6 +130,16 @@ io.on('connection', function(socket) {
         disconnectedTmp.push(`${players[socket.id].name} disconnected!`);
         delete players[socket.id];
     });
+    socket.on('chat', function(data) {
+      data = data.trim();
+      if (data == '') return;
+      
+      console.log(players[socket.id].name + ': ' + data);
+      io.sockets.emit('chat', {
+        name: players[socket.id].name,
+        message: data,
+      });
+    });
 });
 
 setInterval(function() {
@@ -137,7 +147,7 @@ setInterval(function() {
       bullets[id].act();
     }
     io.sockets.emit('state', {"players": players, "bullets": bullets});
-    for(id in disconnectedTmp)
+    for(var id in disconnectedTmp)
         io.sockets.emit('news', disconnectedTmp[id]);
     disconnectedTmp = [];
 }, 1000 / 60);

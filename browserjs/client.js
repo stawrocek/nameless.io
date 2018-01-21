@@ -161,4 +161,23 @@ function onResourcesLoaded(){
     socket.on('playername', function(data) {
        username = data;
     });
+
+    socket.on('chat', receiveChat);
+    document.getElementById('chat-input').
+        addEventListener('keyup', function(event) {
+            if (event.keyCode === 13) {
+                document.getElementById('chat-submit').click();
+            }
+        });
+}
+
+function submitChat() {
+    data = document.getElementById('chat-input').value;
+    socket.emit('chat', data);
+    document.getElementById('chat-input').value = '';
+}
+
+function receiveChat(data) {
+    document.getElementById('chat').innerHTML +=
+        '<b>'+data.name+'</b>: ' + data.message + '<br>';
 }
