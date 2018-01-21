@@ -3,8 +3,10 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const ejs = require('ejs');
 const socketIO = require('socket.io');
+const user = require('./model/user');
 
 const app = express();
+
 
 const server = http.Server(app);
 const io = socketIO(server);
@@ -26,6 +28,18 @@ app.use(express.static(__dirname + '/browserjs/'));
 app.get('/', (req, res) => {
     var model = {};
     res.render('index.html', model);
+});
+
+app.get('/register', (req, res) => {
+  res.render('register.html', {});
+});
+
+app.post('/register', (req, res) => {
+  let n = req.body.name;
+  let p = req.body.password;
+  if (user.get(n) != null) {
+
+  }
 });
 
 app.use((req,res,next) => {
