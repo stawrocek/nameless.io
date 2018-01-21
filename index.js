@@ -78,20 +78,34 @@ server.listen(app.get('port'), function(){
   console.log(`server created on port ${app.get('port')}`);
 });
 
-let players = {};
+function addNews(socket, msg){
+    socket.emit('news', msg);
+}
+
+//let players = {};
+
+let room=0;
+let rooms = [];
+rooms[0]={};
 
 io.on('connection', function(socket) {
     console.log('someone connected, show him da wey brotherz');
     socket.on('new_player', function(data) {
         console.log(`new_player ${socket.id}`);
-        players[socket.id] = new Player(data.user);
-        players[socket.id].print('New player');
+        rooms[room][socket.id] = new Player(data.user);
+        rooms[room][socket.id].print('New player');
+        addNews(socket, `${rooms[room][socket.id].name} connected!`);
     });
     socket.on('movement', function(data) {
-        players[socket.id].act(data);
+      rooms[room][socket.id].act(data);
+    });
+    socket.on('disconnect', function() {
+        console.log(`${rooms[room][socket.id].name} disconnected!`);
+        addNews(socket, `${rooms[room][socket.id].name} disconnected!`);
+        delete rooms[room][socket.id];
     });
 });
 
 setInterval(function() {
-    io.sockets.emit('state', players);
+    io.sockets.emit('state', rooms[room]);
 }, 1000 / 60);

@@ -81,6 +81,10 @@ function onUpdate(state){
     }
 }
 
+function onNews(data){
+    document.getElementById("news").innerHTML = data;
+}
+
 function onResourcesLoaded(){
     let username = prompt("Please enter your name", "Ben Kebobi");
     socket = io();
@@ -95,5 +99,9 @@ function onResourcesLoaded(){
 
     socket.on('state', function(players) {
         onUpdate(players);
+    });
+
+    socket.on('news', function(data) {
+        onNews(data);
     });
 }
