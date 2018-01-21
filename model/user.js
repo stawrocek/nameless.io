@@ -10,7 +10,7 @@ class User {
         };
     }
     get(name) {
-        var file = fs.readFileSync('data/'+name+'.json');
+        var file = fs.readFileSync('data/user/'+name+'.json');
         if (file == null) return null;
         var obj = JSON.parse(file);
         return obj || null;
@@ -22,11 +22,11 @@ class User {
             hash: sha256(password),
         };
         let j = JSON.stringify(user);
-        fs.writeFileSync('data/'+user.name+'.json', j);
+        fs.writeFileSync('data/user/'+user.name+'.json', j);
     }
     save(user) {
         var j = JSON.stringify(user);
-        fs.writeFileSync('data/'+user.name+'.json', j);
+        fs.writeFileSync('data/user/'+user.name+'.json', j);
     }
 }
 

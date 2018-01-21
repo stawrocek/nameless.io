@@ -38,8 +38,11 @@ app.post('/register', (req, res) => {
   let n = req.body.name;
   let p = req.body.password;
   if (user.get(n) != null) {
-
+    res.render('register.html', {nametaken: true});
+    return;
   }
+  user.create(n, p)
+  res.end(`<h1>Congrats ${n}, you are registered! Your password is ${p}</h1>`);
 });
 
 app.use((req,res,next) => {
