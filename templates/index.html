@@ -11,12 +11,18 @@
 </head>
 <body onload="main()">
     <div>
-        <div class="news" id="news">;</div>
+        <div class="news" id="news"></div>
         <div class="control">
             <span style="text-align: center">You are logged in as <%= name %></span>
         </div>
     </div>
     <canvas id="myCanvas" width="800" height="600" style="border:1px solid #000000;">
     </canvas>
+    <div class="chat" id="chat">
+    </div>
+    <div class="chat-input">
+        <input type="text" id="chat-input">
+        <button id="chat-submit" onclick="submitChat()">Submit</button>
+    </div>
 </body>
 </html>

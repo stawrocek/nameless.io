@@ -10,6 +10,8 @@ function Player(name){
     this.angle = 0;
     this.lastTime = Date.now();
     this.rotSpeed = 1;
+    this.lastTimeShoot = Date.now();
+    this.shootSpeed=0.25;
 
     this.print = function(str){
         console.log(`${str} ${this.x}, ${this.y}, ${this.name}`);
@@ -38,6 +40,15 @@ function Player(name){
         //this.y += this.speed*dt*Math.sin(this.angle);
         this.x += this.speed*dt*Math.cos(this.angle);
         this.y += this.speed*dt*Math.sin(this.angle);
+    }
+
+    this.tryToShoot = function(){
+        let dt = (Date.now() - this.lastTimeShoot)/1000.0;
+        if(dt > this.shootSpeed){
+            this.lastTimeShoot = Date.now();
+            return true;
+        }
+        return false;
     }
 } 
 

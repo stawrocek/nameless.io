@@ -3,6 +3,7 @@ let canvas;
 let ctx;
 let socket;
 let username;
+let bullets = [];
 
 const planeScale = 0.1;
 const cSizeX = 800;
@@ -21,7 +22,7 @@ var movement = {
     down: false,
     left: false,
     right: false
-}
+};
 
 document.addEventListener('keydown', function(event) {
     switch (event.keyCode) {
@@ -36,6 +37,9 @@ document.addEventListener('keydown', function(event) {
             break;
         case 83: // S
             movement.down = true;
+            break;
+        case 32: // S
+            movement.space = true;
             break;
     }
 });
@@ -54,11 +58,14 @@ document.addEventListener('keyup', function(event) {
         case 83: // S
             movement.down = false;
             break;
+        case 32: // S
+            movement.space = false;
+            break;
     }
 });
 
 function prepareImages(imagesLoadedCB){
-    let images = ['kenobi.png', 'background.jpg', 'plane1.png', 'plane2.png'];
+    let images = ['kenobi.png', 'background.jpg', 'plane1.png', 'plane2.png', 'bullet.png'];
     let promiseArray = images.map(function(imgurl){
     let prom = new Promise(function(resolve,reject){
         let img = new Image();
@@ -80,7 +87,8 @@ function main(){
     prepareImages(onResourcesLoaded);
 }
 
-function onUpdate(state){
+function onUpdate(state, bullets){
+    console.log(bullets.length);
     if(state === undefined || state === null)
         return;
     let myPlane;
@@ -118,8 +126,6 @@ function onUpdate(state){
     ctx.drawImage(loadedImages['background.jpg'], -viewPosX, -viewPosY);
     for (let id in state) {
         let player = state[id];
-        console.log(`${player.x}, ${player.y}, ${player.name}`);
-
         ctx.font = "15px Comic Sans MS";
         ctx.fillStyle = "red";
         ctx.textAlign = "center";
@@ -140,7 +146,6 @@ function onUpdate(state){
                 planeScale,
                 player.angle);
 
-        console.log('Rotation: ' + player.angle);
         // to draw center
         // ctx.fillStyle = 'green';
         // ctx.beginPath();
@@ -149,8 +154,16 @@ function onUpdate(state){
     }
 }
 
+function drawImage(image, x, y, scale, rotation) {
+    ctx.setTransform(scale, 0, 0, scale, x, y); // sets scale and origin
+    ctx.rotate(rotation);
+    ctx.drawImage(image, -image.width / 2, -image.height / 2);
+
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+} 
+
 function onNews(data){
-    document.getElementById("news").innerHTML = data;
+    document.getElementById("news").innerHTML += "\n" + data;
 }
 
 function onResourcesLoaded(){
@@ -164,8 +177,8 @@ function onResourcesLoaded(){
         }, 1000 / 60);
     });
 
-    socket.on('state', function(players) {
-        onUpdate(players);
+    socket.on('state', function(data) {
+        onUpdate(data.players, data.bullets);
     });
 
     socket.on('news', function(data) {
@@ -175,12 +188,23 @@ function onResourcesLoaded(){
     socket.on('playername', function(data) {
        username = data;
     });
+
+    socket.on('chat', receiveChat);
+    document.getElementById('chat-input').
+        addEventListener('keyup', function(event) {
+            if (event.keyCode === 13) {
+                document.getElementById('chat-submit').click();
+            }
+        });
 }
 
-function drawImage(image, x, y, scale, rotation) {
-    ctx.setTransform(scale, 0, 0, scale, x, y); // sets scale and origin
-    ctx.rotate(rotation);
-    ctx.drawImage(image, -image.width / 2, -image.height / 2);
+function submitChat() {
+    data = document.getElementById('chat-input').value;
+    socket.emit('chat', data);
+    document.getElementById('chat-input').value = '';
+}
 
-    ctx.setTransform(1, 0, 0, 1, 0, 0); 
-} 
+function receiveChat(data) {
+    document.getElementById('chat').innerHTML +=
+        '<b>'+data.name+'</b>: ' + data.message + '<br>';
+}

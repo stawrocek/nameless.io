@@ -9,6 +9,8 @@ const user = require('./model/user');
 const sha256 = require('js-sha256').sha256;
 const playersModule = require('./serverjs/player');
 let Player = playersModule.Player;
+const bulletsModule = require('./serverjs/bullet');
+let Bullet = bulletsModule.Bullet;
 
 const app = express();
 let userName;
@@ -100,6 +102,12 @@ function addNews(socket, msg){
 
 let players = {};
 let disconnectedTmp=[];
+let bullets = [];
+
+function spawnBullet(socket, plane){
+    //socket.emit('new_bullet', newBullet);
+    bullets.push(new Bullet(plane.x, plane.y, plane.angle, plane.speed));
+}
 
 io.on('connection', function(socket) {
     console.log('someone connected, show him da wey brotherz');
@@ -111,7 +119,10 @@ io.on('connection', function(socket) {
         socket.emit('playername', userName);
     });
     socket.on('movement', function(data) {
-      players[socket.id].act(data);
+        players[socket.id].act(data);
+        if(data.space && players[socket.id].tryToShoot()){
+            spawnBullet(socket, players[socket.id]);
+        }
     });
     socket.on('disconnect', function() {
         //console.log(`${players[socket.id].name} disconnected!`);
@@ -119,12 +130,24 @@ io.on('connection', function(socket) {
         disconnectedTmp.push(`${players[socket.id].name} disconnected!`);
         delete players[socket.id];
     });
+    socket.on('chat', function(data) {
+      data = data.trim();
+      if (data == '') return;
+      
+      console.log(players[socket.id].name + ': ' + data);
+      io.sockets.emit('chat', {
+        name: players[socket.id].name,
+        message: data,
+      });
+    });
 });
 
 setInterval(function() {
-    io.sockets.emit('state', players);
-    for(id in disconnectedTmp)
+    for(let id in bullets){
+      bullets[id].act();
+    }
+    io.sockets.emit('state', {"players": players, "bullets": bullets});
+    for(var id in disconnectedTmp)
         io.sockets.emit('news', disconnectedTmp[id]);
     disconnectedTmp = [];
-
 }, 1000 / 60);
