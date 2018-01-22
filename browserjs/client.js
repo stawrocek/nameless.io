@@ -4,7 +4,7 @@ let ctx;
 let socket;
 let username;
 
-const planeScale = 10;
+const planeScale = 0.1;
 const cSizeX = 800;
 const cSizeY = 600;
 const cMarginX = 200;
@@ -58,7 +58,7 @@ document.addEventListener('keyup', function(event) {
 });
 
 function prepareImages(imagesLoadedCB){
-    let images = ['kenobi.png', 'background.jpg', 'plane1.png'];
+    let images = ['kenobi.png', 'background.jpg', 'plane1.png', 'plane2.png'];
     let promiseArray = images.map(function(imgurl){
     let prom = new Promise(function(resolve,reject){
         let img = new Image();
@@ -115,17 +115,37 @@ function onUpdate(state){
         viewPosY = 0;
     if (viewPosY > bSizeY - cSizeY)
         viewPosY = bSizeY - cSizeY;
-    
     ctx.drawImage(loadedImages['background.jpg'], -viewPosX, -viewPosY);
     for (let id in state) {
         let player = state[id];
         console.log(`${player.x}, ${player.y}, ${player.name}`);
-        ctx.drawImage(loadedImages['plane1.png'], player.x - viewPosX - loadedImages['plane1.png'].width / planeScale, player.y - viewPosY - loadedImages['plane1.png'].height / planeScale, loadedImages['plane1.png'].width / planeScale, loadedImages['plane1.png'].height / planeScale);
-        console.log(loadedImages['plane1.png'].width);
+
         ctx.font = "15px Comic Sans MS";
         ctx.fillStyle = "red";
         ctx.textAlign = "center";
-        ctx.fillText('['+player.name+']', player.x - viewPosX - loadedImages['plane1.png'].width / (2 * planeScale), player.y - viewPosY - (loadedImages['plane1.png'].height) / (2 * planeScale) + nickOffset); 
+        ctx.fillText('['+player.name+']', player.x - viewPosX, player.y - viewPosY + nickOffset); 
+        if (Math.abs(player.angle + Math.PI / 2) % (Math.PI * 2) > Math.PI)
+            if (player.angle < -Math.PI / 2)
+                img = loadedImages['plane1.png'];
+            else
+                img = loadedImages['plane2.png'];
+        else
+            if (player.angle < -Math.PI / 2)
+                img = loadedImages['plane2.png'];
+            else
+                img = loadedImages['plane1.png'];
+        drawImage(img,
+                player.x - viewPosX,
+                player.y - viewPosY,
+                planeScale,
+                player.angle);
+
+        console.log('Rotation: ' + player.angle);
+        // to draw center
+        // ctx.fillStyle = 'green';
+        // ctx.beginPath();
+        // ctx.arc(player.x - viewPosX, player.y - viewPosY, 5, 0, 2 * Math.PI);
+        // ctx.fill();
     }
 }
 
@@ -156,3 +176,11 @@ function onResourcesLoaded(){
        username = data;
     });
 }
+
+function drawImage(image, x, y, scale, rotation) {
+    ctx.setTransform(scale, 0, 0, scale, x, y); // sets scale and origin
+    ctx.rotate(rotation);
+    ctx.drawImage(image, -image.width / 2, -image.height / 2);
+
+    ctx.setTransform(1, 0, 0, 1, 0, 0); 
+} 
