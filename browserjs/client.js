@@ -6,6 +6,7 @@ let username;
 let bullets = [];
 
 const planeScale = 0.1;
+const bulletScale = 0.12;
 const cSizeX = 800;
 const cSizeY = 600;
 const cMarginX = 200;
@@ -65,7 +66,7 @@ document.addEventListener('keyup', function(event) {
 });
 
 function prepareImages(imagesLoadedCB){
-    let images = ['kenobi.png', 'background.jpg', 'plane1.png', 'plane2.png', 'bullet.png'];
+    let images = ['kenobi.png', 'background.jpg', 'plane1.png', 'plane2.png', 'bullet.png', 'bullet2.png', 'bullet3.png'];
     let promiseArray = images.map(function(imgurl){
     let prom = new Promise(function(resolve,reject){
         let img = new Image();
@@ -124,12 +125,16 @@ function onUpdate(state, bullets){
     if (viewPosY > bSizeY - cSizeY)
         viewPosY = bSizeY - cSizeY;
     ctx.drawImage(loadedImages['background.jpg'], -viewPosX, -viewPosY);
+    for (let id in bullets) {
+        let bullet = bullets[id];
+        drawImage(loadedImages['bullet3.png'],
+                  bullet.x - viewPosX,
+                  bullet.y - viewPosY,
+                  bulletScale,
+                  bullet.angle);
+    }
     for (let id in state) {
         let player = state[id];
-        ctx.font = "15px Comic Sans MS";
-        ctx.fillStyle = "red";
-        ctx.textAlign = "center";
-        ctx.fillText('['+player.name+']', player.x - viewPosX, player.y - viewPosY + nickOffset); 
         if (Math.abs(player.angle + Math.PI / 2) % (Math.PI * 2) > Math.PI)
             if (player.angle < -Math.PI / 2)
                 img = loadedImages['plane1.png'];
@@ -145,6 +150,11 @@ function onUpdate(state, bullets){
                 player.y - viewPosY,
                 planeScale,
                 player.angle);
+
+        ctx.font = "15px Comic Sans MS";
+        ctx.fillStyle = "red";
+        ctx.textAlign = "center";
+        ctx.fillText('[' + player.name + ']', player.x - viewPosX, player.y - viewPosY + nickOffset); 
 
         // to draw center
         // ctx.fillStyle = 'green';
