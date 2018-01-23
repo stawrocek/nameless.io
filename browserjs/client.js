@@ -14,6 +14,10 @@ const cMarginY = 150;
 const bSizeX = 1920;
 const bSizeY = 1200;
 const nickOffset = 32;
+const hBarMarginX = 20;
+const hBarMarginY = 15;
+const hBarWidth = 100;
+const hBarHeigth = 10;
 let viewPosX = 0;
 let viewPosY = 0;
 
@@ -66,7 +70,7 @@ document.addEventListener('keyup', function(event) {
 });
 
 function prepareImages(imagesLoadedCB){
-    let images = ['kenobi.png', 'background.jpg', 'plane1.png', 'plane2.png', 'bullet.png', 'bullet2.png', 'bullet3.png'];
+    let images = ['kenobi.png', 'background.jpg', 'plane1.png', 'plane2.png', 'bullet.png', 'bullet2.png', 'bullet3.png', 'smoke.png'];
     let promiseArray = images.map(function(imgurl){
     let prom = new Promise(function(resolve,reject){
         let img = new Image();
@@ -151,6 +155,19 @@ function onUpdate(state, bullets){
                 planeScale,
                 player.angle);
 
+        if(player.health < 33)
+            drawImage(loadedImages['smoke.png'],
+                player.x - viewPosX,
+                player.y - viewPosY,
+                planeScale,
+                0);
+        if (player.health < 10)
+            drawImage(loadedImages['smoke.png'],
+                player.x - viewPosX,
+                player.y - viewPosY,
+                planeScale,
+                Math.PI);
+
         ctx.font = "15px Comic Sans MS";
         ctx.fillStyle = "red";
         ctx.textAlign = "center";
@@ -162,7 +179,23 @@ function onUpdate(state, bullets){
         // ctx.arc(player.x - viewPosX, player.y - viewPosY, 5, 0, 2 * Math.PI);
         // ctx.fill();
     }
+    drawHud(myPlane);
 }
+
+function drawHud(myPlane) {
+    // ctx.fillStyle = '#808080';
+    // ctx.fillRect(0, 0, cSizeX, 30);
+    ctx.fillStyle = "black";
+    ctx.fillRect(cSizeX - hBarMarginX - hBarWidth - 3, hBarMarginY - 3, hBarWidth + 6, hBarHeigth + 6);
+    var grd = ctx.createLinearGradient(cSizeX - hBarMarginX - hBarWidth, 0, cSizeX - hBarMarginX - hBarWidth*(1/3), 0);
+    grd.addColorStop(0, "red");
+    grd.addColorStop(1, "green");
+    ctx.fillStyle = grd;
+    ctx.fillRect(cSizeX - hBarMarginX - hBarWidth, hBarMarginY, hBarWidth * (myPlane.health/100), hBarHeigth);
+    ctx.font = "10px Comic Sans MS";
+    ctx.fillStyle = "yellow";
+    ctx.fillText('Health', cSizeX - hBarMarginX - hBarWidth + hBarWidth/2, hBarMarginY ); 
+};
 
 function drawImage(image, x, y, scale, rotation) {
     ctx.setTransform(scale, 0, 0, scale, x, y); // sets scale and origin

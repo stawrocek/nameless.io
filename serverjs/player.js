@@ -12,6 +12,7 @@ function Player(name){
     this.rotSpeed = 1;
     this.lastTimeShoot = Date.now();
     this.shootSpeed=0.25;
+    this.health = 100;
 
     this.print = function(str){
         console.log(`${str} ${this.x}, ${this.y}, ${this.name}`);
