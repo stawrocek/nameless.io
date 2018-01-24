@@ -14,6 +14,7 @@ let Bullet = bulletsModule.Bullet;
 
 const app = express();
 let userName;
+let playerCtr=0;
 
 const server = http.Server(app);
 const io = socketIO(server);
@@ -106,14 +107,14 @@ let bullets = [];
 
 function spawnBullet(socket, plane){
     //socket.emit('new_bullet', newBullet);
-    bullets.push(new Bullet(plane.x, plane.y, plane.angle, plane.speed));
+    bullets.push(new Bullet(plane.x, plane.y, plane.angle, 1000, plane.ctr));
 }
 
 io.on('connection', function(socket) {
     console.log('someone connected, show him da wey brotherz');
     socket.on('new_player', function(data) {
         //console.log(`new_player ${socket.id}`);
-        players[socket.id] = new Player(userName);
+        players[socket.id] = new Player(userName, playerCtr++);
         players[socket.id].print('New player');
         addNews(socket, `${players[socket.id].name} connected!`);
         socket.emit('playername', userName);
@@ -142,10 +143,27 @@ io.on('connection', function(socket) {
     });
 });
 
+function testCollision(player, bullet){
+    return (player.x-bullet.x)*(player.x-bullet.x)+
+            (player.y-bullet.y)*(player.y-bullet.y) <= 2134+1673;
+}
+
 setInterval(function() {
     for(let id in bullets){
       bullets[id].act();
     }
+
+    for(pId in players){
+        for(bId in bullets){
+            let p = players[pId];
+            let b = bullets[bId];
+            if(b.owner !== p.ctr && testCollision(p, b)){
+                p.health -= b.dmg;
+                console.log(`${p.name} get shot`);
+            }
+        }
+    }
+
     io.sockets.emit('state', {"players": players, "bullets": bullets});
     for(var id in disconnectedTmp)
         io.sockets.emit('news', disconnectedTmp[id]);

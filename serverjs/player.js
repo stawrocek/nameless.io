@@ -1,17 +1,18 @@
 const process = require('process');
 
-function Player(name){
+function Player(name,ctr){
+    this.ctr = ctr;
     this.name = name;
     this.x = 300;
     this.y = 200;
     //this.speedX = 100;
     //this.speedY = 100;
-    this.speed = 100;
+    this.speed = 200;
     this.angle = 0;
     this.lastTime = Date.now();
-    this.rotSpeed = 1;
+    this.rotSpeed = 1.3;
     this.lastTimeShoot = Date.now();
-    this.shootSpeed=0.25;
+    this.shootSpeed=0.2;
     this.health = 100;
 
     this.print = function(str){

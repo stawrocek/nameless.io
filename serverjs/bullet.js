@@ -1,8 +1,10 @@
-function Bullet(_x, _y, _angle, _speed){
+function Bullet(_x, _y, _angle, _speed, owner){
     this.x = _x;
     this.y = _y;
     this.speed = _speed;
     this.angle = _angle;
+    this.owner = owner;
+    this.dmg = 5;
     this.lastTime = Date.now();
 
 
