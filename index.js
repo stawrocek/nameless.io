@@ -149,17 +149,23 @@ function testCollision(player, bullet){
 }
 
 setInterval(function() {
-    for(let id in bullets){
-      bullets[id].act();
+    for(let id = bullets.length-1; id >= 0; id--){
+        if(bullets[id].x < 50 || bullets[id].x > 1920 + 50
+            || bullets[id].y < 50 || bullets[id].y > 1200 + 50)
+            bullets.splice(id, 1);
+        else
+            bullets[id].act();
     }
 
     for(pId in players){
-        for(bId in bullets){
+        for(let bId = bullets.length-1; bId >= 0; bId--){
             let p = players[pId];
             let b = bullets[bId];
             if(b.owner !== p.ctr && testCollision(p, b)){
                 p.health -= b.dmg;
                 console.log(`${p.name} get shot`);
+
+                bullets.splice(bId, 1);
             }
         }
     }
