@@ -43,7 +43,7 @@ document.addEventListener('keydown', function(event) {
         case 83: // S
             movement.down = true;
             break;
-        case 32: // S
+        case 70: // f
             movement.space = true;
             break;
     }
@@ -63,7 +63,7 @@ document.addEventListener('keyup', function(event) {
         case 83: // S
             movement.down = false;
             break;
-        case 32: // S
+        case 70: // f
             movement.space = false;
             break;
     }
