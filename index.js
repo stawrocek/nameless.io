@@ -120,7 +120,9 @@ io.on('connection', function(socket) {
         socket.emit('playername', userName);
     });
     socket.on('movement', function(data) {
-        players[socket.id].act(data);
+        let res = players[socket.id].act(data);
+        if(res !== false)
+            io.sockets.emit('news', res);
         if(data.space && players[socket.id].tryToShoot()){
             spawnBullet(socket, players[socket.id]);
         }
@@ -161,9 +163,20 @@ setInterval(function() {
         for(let bId = bullets.length-1; bId >= 0; bId--){
             let p = players[pId];
             let b = bullets[bId];
-            if(b.owner !== p.ctr && testCollision(p, b)){
+            if(p.isAlive && b.owner !== p.ctr && testCollision(p, b)){
                 p.health -= b.dmg;
                 console.log(`${p.name} get shot`);
+                
+                if(p.health <= 0){
+                    p.isAlive=false;
+                    p.respawnCounter=0;
+                    p.health=100;
+                    for(pId2 in players){
+                        let p2 = players[pId2];
+                        if(p2.ctr === b.owner)
+                            io.sockets.emit('news', `${p2.name} pwned ${p.name}`);
+                    }
+                }
 
                 bullets.splice(bId, 1);
             }

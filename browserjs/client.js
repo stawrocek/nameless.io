@@ -139,6 +139,8 @@ function onUpdate(state, bullets){
     }
     for (let id in state) {
         let player = state[id];
+        if(player.isAlive === false)
+            continue;
         if (Math.abs(player.angle + Math.PI / 2) % (Math.PI * 2) > Math.PI)
             if (player.angle < -Math.PI / 2)
                 img = loadedImages['plane1.png'];

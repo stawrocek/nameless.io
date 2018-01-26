@@ -1,19 +1,24 @@
 const process = require('process');
 
+function getLucky(min, max) {
+    return Math.random() * (max - min) + min;
+}
+
 function Player(name,ctr){
     this.ctr = ctr;
     this.name = name;
-    this.x = 300;
-    this.y = 200;
-    //this.speedX = 100;
-    //this.speedY = 100;
+    this.x = getLucky(0+200, 1920-200);
+    this.y = getLucky(0+200, 1200-200);
+    this.angle = getLucky(0, 3.1415*2);
+    
     this.speed = 200;
-    this.angle = 0;
     this.lastTime = Date.now();
     this.rotSpeed = 1.3;
     this.lastTimeShoot = Date.now();
     this.shootSpeed=0.2;
     this.health = 100;
+    this.isAlive=true;
+    this.respawnCounter=0;
 
     this.print = function(str){
         console.log(`${str} ${this.x}, ${this.y}, ${this.name}`);
@@ -22,26 +27,31 @@ function Player(name,ctr){
     this.act = function(mov){
         let dt = (Date.now() - this.lastTime)/1000.0;
         this.lastTime = Date.now();
-        //console.log(dt);
+
+        if(this.isAlive ===  false){
+            if(this.respawnCounter <= 2){
+                this.respawnCounter += dt;
+                return false;
+            }
+            else{
+                //console.log(`respawn ${this.name}`);
+                this.respawnCounter=0;
+                this.isAlive=true;
+                this.x = getLucky(0+200, 1920-200);
+                this.y = getLucky(0+200, 1200-200);
+                this.angle = getLucky(0, 3.1415*2);
+                return `${this.name} has respawned`;
+            }
+        }
         if(mov.up){
-            //this.y += -this.speedY*dt;
             this.angle -= this.rotSpeed*dt;
         }
-        if(mov.right){
-            //this.x += this.speedX*dt;
-            
-        }
         if(mov.down){
-            //this.y += +this.speedY*dt;
             this.angle += this.rotSpeed*dt;
         }
-        if(mov.left){
-            //this.x -= this.speedX*dt;
-        }
-        //this.x += this.speed*dt*Math.cos(this.angle);
-        //this.y += this.speed*dt*Math.sin(this.angle);
         this.x += this.speed*dt*Math.cos(this.angle);
         this.y += this.speed*dt*Math.sin(this.angle);
+        return false;
     }
 
     this.tryToShoot = function(){
