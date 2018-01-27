@@ -47,6 +47,9 @@ document.addEventListener('keydown', function(event) {
         case 70: // f
             movement.space = true;
             break;
+        case 32: // space
+            movement.space = true;
+            break;
     }
 });
 
@@ -65,6 +68,9 @@ document.addEventListener('keyup', function(event) {
             movement.down = false;
             break;
         case 70: // f
+            movement.space = false;
+            break;
+        case 32: // space
             movement.space = false;
             break;
     }
