@@ -1,5 +1,7 @@
 const process = require('process');
 
+const respawnTime = 7;
+
 function getLucky(min, max) {
     return Math.random() * (max - min) + min;
 }
@@ -29,7 +31,7 @@ function Player(name,ctr){
         this.lastTime = Date.now();
 
         if(this.isAlive ===  false){
-            if(this.respawnCounter <= 2){
+            if (this.respawnCounter <= respawnTime){
                 this.respawnCounter += dt;
                 return false;
             }

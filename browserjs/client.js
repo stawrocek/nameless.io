@@ -6,6 +6,7 @@ let username;
 let bullets = [];
 let playerColor = "rgb(179, 71, 0)";
 
+const respawnTime = 7;
 const planeScale = 0.1;
 const bulletScale = 0.12;
 const cSizeX = 800;
@@ -189,6 +190,14 @@ function onUpdate(state, bullets){
         // ctx.fill();
     }
     drawHud(myPlane);
+
+    if(!myPlane.isAlive) {
+        ctx.font = "60px Comic Sans MS";
+        ctx.fillStyle = "yellow";
+        ctx.textAlign = "center";
+        ctx.fillText('Respawn in:', cSizeX / 2, cSizeY / 2 - 30); 
+        ctx.fillText(Math.round(respawnTime - myPlane.respawnCounter), cSizeX / 2, cSizeY / 2 + 30); 
+    }
 }
 
 function drawHud(myPlane) {

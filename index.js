@@ -165,7 +165,7 @@ setInterval(function() {
             let b = bullets[bId];
             if(p.isAlive && b.owner !== p.ctr && testCollision(p, b)){
                 p.health -= b.dmg;
-                console.log(`${p.name} get shot`);
+                console.log(`${p.name} got shot`);
                 
                 if(p.health <= 0){
                     p.isAlive=false;
