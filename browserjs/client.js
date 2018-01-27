@@ -4,6 +4,7 @@ let ctx;
 let socket;
 let username;
 let bullets = [];
+let playerColor = "rgb(179, 71, 0)";
 
 const planeScale = 0.1;
 const bulletScale = 0.12;
@@ -251,5 +252,7 @@ function submitChat() {
 
 function receiveChat(data) {
     document.getElementById('chat').innerHTML +=
-        '<b>'+data.name+'</b>: ' + data.message + '<br>';
+        '<b style="color: '+playerColor+'">'+data.name+'</b>: ' + data.message + '<br>';
+    var elem = document.getElementById('chat');
+    elem.scrollTop = elem.scrollHeight;
 }
