@@ -22,7 +22,8 @@ const hBarWidth = 100;
 const hBarHeigth = 10;
 let viewPosX = 0;
 let viewPosY = 0;
-
+let newsArray = [];
+let newsId=0;
 
 var movement = {
     up: false,
@@ -210,7 +211,12 @@ function onUpdate(state, bullets){
         ctx.fillText(scoreTxt, 5, 30+15*pId);
     }
     
-    
+    ctx.textAlign = "left";
+    for(let nId in newsArray){
+        scoreTxt = `${newsArray[nId].news}\n`;
+        console.log(scoreTxt);
+        ctx.fillText(scoreTxt, 5, 30+75+15*nId);
+    }    
 
 }
 
@@ -238,15 +244,17 @@ function drawImage(image, x, y, scale, rotation) {
 } 
 
 function onNews(data){
-    document.getElementById("news").innerHTML +=  data + "<br>";
+    let tmpNewsId = newsId++;
+    newsArray.push({
+        "news": data,
+        "newsId": tmpNewsId
+    });
     setTimeout(function() {
-        var i = 0;
-        for (; i < document.getElementById("news").innerHTML.length; i++) {
-            if (document.getElementById("news").innerHTML[i] == ">") {
-                break;
+        for(let id in newsArray){
+            if(newsArray[id].newsId == tmpNewsId){
+                newsArray.splice(id, 1);
             }
         }
-        document.getElementById("news").innerHTML = document.getElementById("news").innerHTML.substring(i+1);
     }, 3000);
 }
 
