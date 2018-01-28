@@ -224,7 +224,16 @@ function drawImage(image, x, y, scale, rotation) {
 } 
 
 function onNews(data){
-    document.getElementById("news").innerHTML += "\n" + data;
+    document.getElementById("news").innerHTML +=  data + "<br>";
+    setTimeout(function() {
+        var i = 0;
+        for (; i < document.getElementById("news").innerHTML.length; i++) {
+            if (document.getElementById("news").innerHTML[i] == ">") {
+                break;
+            }
+        }
+        document.getElementById("news").innerHTML = document.getElementById("news").innerHTML.substring(i+1);
+    }, 3000);
 }
 
 function onResourcesLoaded(){
