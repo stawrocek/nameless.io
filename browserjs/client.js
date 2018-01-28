@@ -101,7 +101,6 @@ function main(){
 }
 
 function onUpdate(state, bullets){
-    console.log(bullets.length);
     if(state === undefined || state === null)
         return;
     let myPlane;
@@ -145,8 +144,13 @@ function onUpdate(state, bullets){
                   bulletScale,
                   bullet.angle);
     }
+    let scoreArray=[];
     for (let id in state) {
         let player = state[id];
+        scoreArray.push({
+            "name": player.name,
+            "frags": player.fragCtr
+        });
         if(player.isAlive === false)
             continue;
         if (Math.abs(player.angle + Math.PI / 2) % (Math.PI * 2) > Math.PI)
@@ -182,12 +186,6 @@ function onUpdate(state, bullets){
         ctx.fillStyle = "red";
         ctx.textAlign = "center";
         ctx.fillText('[' + player.name + ']', player.x - viewPosX, player.y - viewPosY + nickOffset); 
-
-        // to draw center
-        // ctx.fillStyle = 'green';
-        // ctx.beginPath();
-        // ctx.arc(player.x - viewPosX, player.y - viewPosY, 5, 0, 2 * Math.PI);
-        // ctx.fill();
     }
     drawHud(myPlane);
 
@@ -198,6 +196,22 @@ function onUpdate(state, bullets){
         ctx.fillText('Respawn in:', cSizeX / 2, cSizeY / 2 - 30); 
         ctx.fillText(Math.round(respawnTime - myPlane.respawnCounter), cSizeX / 2, cSizeY / 2 + 30); 
     }
+
+    scoreArray.sort((a,b) => a.frags < b.frags);
+    ctx.font = "15px Comic Sans MS";
+    ctx.fillStyle = "green";
+    ctx.textAlign = "left";
+    let scoreTxt="Top fighters:\n";
+    ctx.fillText(scoreTxt, 5, 15);
+    for(let pId in scoreArray){
+        if(pId > 5)
+            break;
+        scoreTxt = `${scoreArray[pId].name}: ${scoreArray[pId].frags}\n`;
+        ctx.fillText(scoreTxt, 5, 30+15*pId);
+    }
+    
+    
+
 }
 
 function drawHud(myPlane) {

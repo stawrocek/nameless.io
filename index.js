@@ -173,8 +173,11 @@ setInterval(function() {
                     p.health=100;
                     for(pId2 in players){
                         let p2 = players[pId2];
-                        if(p2.ctr === b.owner)
+                        if(p2.ctr === b.owner){
                             io.sockets.emit('news', `${p2.name} pwned ${p.name}`);
+                            p2.fragCtr++;
+                            p.fragCtr--;
+                        }
                     }
                 }
 

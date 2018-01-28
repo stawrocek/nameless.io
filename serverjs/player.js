@@ -12,7 +12,6 @@ function Player(name,ctr){
     this.x = getLucky(0+200, 1920-200);
     this.y = getLucky(0+200, 1200-200);
     this.angle = getLucky(0, 3.1415*2);
-    
     this.speed = 200;
     this.lastTime = Date.now();
     this.rotSpeed = 1.3;
@@ -21,6 +20,7 @@ function Player(name,ctr){
     this.health = 100;
     this.isAlive=true;
     this.respawnCounter=0;
+    this.fragCtr = 0;
 
     this.print = function(str){
         console.log(`${str} ${this.x}, ${this.y}, ${this.name}`);
