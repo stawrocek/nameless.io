@@ -123,7 +123,7 @@ io.on('connection', function(socket) {
         let res = players[socket.id].act(data);
         if(res !== false)
             io.sockets.emit('news', res);
-        if(data.space && players[socket.id].tryToShoot()){
+        if(data.space && players[socket.id].isAlive && players[socket.id].tryToShoot()){
             spawnBullet(socket, players[socket.id]);
         }
     });
@@ -186,7 +186,32 @@ setInterval(function() {
         }
     }
 
-    io.sockets.emit('state', {"players": players, "bullets": bullets});
+    let reducedPlayers = [];
+    for(let id in players){
+        let p = players[id];
+        reducedPlayers.push({
+            "name": p.name,
+            "x": p.x,
+            "y": p.y,
+            "angle": p.angle,
+            "health": p.health,
+            "isAlive": p.isAlive,
+            "respawnCounter":p.respawnCounter,
+            "fragCtr": p.fragCtr
+        });
+    }
+
+    let reducedBullets = [];
+    for(let id in bullets){
+        let b = bullets[id];
+        reducedBullets.push({
+            "x": b.x,
+            "y": b.y,
+            "angle": b.angle
+        });
+    }
+
+    io.sockets.emit('state', {"players": reducedPlayers, "bullets": reducedBullets});
     for(var id in disconnectedTmp)
         io.sockets.emit('news', disconnectedTmp[id]);
     disconnectedTmp = [];
